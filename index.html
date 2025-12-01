@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Christmas & New Year Countdown</title>
+
+<style>
+    body {
+        margin: 0;
+        background: linear-gradient(135deg, #b30000, #003366) no-repeat fixed;
+        background-size: 100% 100%;
+        font-family: "Poppins", sans-serif;
+        color: white;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    .container {
+        margin: auto;
+        padding: 30px;
+        text-align: center;
+        backdrop-filter: blur(15px);
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+        z-index: 2;
+        animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        text-shadow: 0 0 15px rgba(255,255,255,0.7);
+    }
+
+    .countdown {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 18px;
+        margin-top: 10px;
+    }
+
+    .time-box {
+        background: rgba(255,255,255,0.25);
+        padding: 18px;
+        border-radius: 15px;
+        width: 95px;
+        backdrop-filter: blur(7px);
+        box-shadow: 0 0 12px rgba(255,255,255,0.35);
+        transition: transform 0.3s;
+    }
+
+    .time-box:hover {
+        transform: scale(1.08);
+    }
+
+    .number {
+        font-size: 2rem;
+        font-weight: 700;
+        text-shadow: 0 0 8px rgba(255,255,255,0.8);
+    }
+
+    .label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    .snowflake {
+        position: fixed;
+        color: white;
+        font-size: 1em;
+        opacity: 0.8;
+        z-index: 1;
+        pointer-events: none;
+        user-select: none;
+        animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-20px); }
+        100% { transform: translateY(110vh); }
+    }
+
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    #santa {
+        position: fixed;
+        top: 20%;
+        left: -300px;
+        width: 280px;
+        z-index: 3;
+        pointer-events: none;
+        filter: drop-shadow(0px 0px 8px white);
+    }
+
+    #musicBtn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        padding: 12px 15px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        cursor: pointer;
+        z-index: 3;
+    }
+
+    footer {
+        text-align: center;
+        font-size: 1rem;
+        padding: 15px;
+        opacity: 0.9;
+        z-index: 5;
+        color: white;
+    }
+</style>
+</head>
+
+<body>
+
+<img id="santa" src="https://pngimg.com/uploads/santa_sleigh/santa_sleigh_PNG72.png">
+
+<canvas id="fireworks"></canvas>
+<canvas id="confetti"></canvas>
+
+<div class="container">
+    <h1 id="title">Christmas Countdown 🎄</h1>
+
+    <div class="countdown">
+        <div class="time-box"><div class="number" id="days">0</div><div class="label">Days</div></div>
+        <div class="time-box"><div class="number" id="hours">0</div><div class="label">Hours</div></div>
+        <div class="time-box"><div class="number" id="minutes">0</div><div class="label">Minutes</div></div>
+        <div class="time-box"><div class="number" id="seconds">0</div><div class="label">Seconds</div></div>
+    </div>
+</div>
+
+<footer>Created with ❤️ by Sumit Arora</footer>
+
+<audio id="bgMusic" loop>
+    <source src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Jingle_Bells_%28ISRC_USUAN1100187%29.mp3" type="audio/mp3">
+</audio>
+
+<button id="musicBtn">🎵 Play Music</button>
+
+<script>
+function updateCountdown() {
+    const now = new Date();
+    const year = now.getFullYear();
+    let christmas = new Date(`December 25, ${year} 00:00:00`);
+    let newYear = new Date(`January 1, ${year + 1} 00:00:00`);
+    let target;
+    const title = document.getElementById("title");
+
+    if (now < christmas) {
+        target = christmas;
+        title.textContent = "Christmas Countdown 🎄";
+    } else {
+        target = newYear;
+        title.textContent = "New Year Countdown 🎉";
+    }
+
+    const diff = target - now;
+
+    document.getElementById("days").textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+    document.getElementById("hours").textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    document.getElementById("minutes").textContent = Math.floor((diff / (1000 * 60)) % 60);
+    document.getElementById("seconds").textContent = Math.floor((diff / 1000) % 60);
+
+    if (diff <= 2000 && !celebrationStarted) {
+        celebrationStarted = true;
+        startFireworks();
+        startConfetti();
+        startSanta();
+    }
+}
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+let snowCount = 0;
+const maxSnow = 80;
+
+function createSnowflake() {
+    if (snowCount >= maxSnow) return;
+
+    const snow = document.createElement("div");
+    snow.classList.add("snowflake");
+    snow.textContent = "❄";
+
+    const size = Math.random() * 12 + 8;
+    snow.style.left = Math.random() * window.innerWidth + "px";
+    snow.style.fontSize = size + "px";
+    snow.style.opacity = Math.random() * 0.6 + 0.4;
+
+    const speed = (50 - size) / 10;
+    snow.style.animationDuration = (speed + Math.random() * 3) + "s";
+
+    document.body.appendChild(snow);
+    snowCount++;
+
+    snow.addEventListener("animationend", () => {
+        snow.remove();
+        snowCount--;
+    });
+}
+setInterval(createSnowflake, 130);
+
+const music = document.getElementById("bgMusic");
+document.getElementById("musicBtn").onclick = function () {
+    if (music.paused) {
+        music.play();
+        this.textContent = "⏸ Pause Music";
+    } else {
+        music.pause();
+        this.textContent = "🎵 Play Music";
+    }
+};
+
+const fwCanvas = document.getElementById("fireworks");
+const fwCtx = fwCanvas.getContext("2d");
+function resizeFW() {
+    fwCanvas.width = innerWidth;
+    fwCanvas.height = innerHeight;
+}
+resizeFW(); onresize = resizeFW;
+
+let fireworks = [];
+let fireworksActive = false;
+let celebrationStarted = false;
+
+function startFireworks() {
+    fireworksActive = true;
+    let interval = setInterval(() => {
+        fireworks.push({
+            x: Math.random() * fwCanvas.width,
+            y: fwCanvas.height,
+            speed: Math.random() * 3 + 3,
+            color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+            explode: false,
+            radius: 2
+        });
+    }, 300);
+
+    setTimeout(() => clearInterval(interval), 20000);
+}
+
+function drawFireworks() {
+    fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+    fireworks.forEach(fw => {
+        if (!fw.explode) {
+            fwCtx.beginPath();
+            fwCtx.arc(fw.x, fw.y, fw.radius, 0, Math.PI * 2);
+            fwCtx.fillStyle = fw.color;
+            fwCtx.fill();
+            fw.y -= fw.speed;
+
+            if (fw.y < fwCanvas.height * (0.4 + Math.random() * 0.2)) {
+                fw.explode = true;
+                fw.particles = [];
+
+                for (let i = 0; i < 45; i++) {
+                    fw.particles.push({
+                        x: fw.x,
+                        y: fw.y,
+                        angle: Math.random() * Math.PI * 2,
+                        speed: Math.random() * 4 + 1,
+                        radius: 2
+                    });
+                }
+            }
+        } else {
+            fw.particles.forEach(p => {
+                fwCtx.beginPath();
+                fwCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                fwCtx.fillStyle = fw.color;
+                fwCtx.fill();
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+                p.speed *= 0.98;
+            });
+        }
+    });
+
+    fireworks = fireworks.filter(fw => fw.explode ? fw.particles.some(p => p.speed > 0.2) : true);
+
+    requestAnimationFrame(drawFireworks);
+}
+drawFireworks();
+
+const confCanvas = document.getElementById("confetti");
+const confCtx = confCanvas.getContext("2d");
+function resizeConfetti() {
+    confCanvas.width = innerWidth;
+    confCanvas.height = innerHeight;
+}
+resizeConfetti(); onresize = resizeConfetti;
+
+let confettiPieces = [];
+function startConfetti() {
+    for (let i = 0; i < 300; i++) {
+        confettiPieces.push({
+            x: Math.random() * confCanvas.width,
+            y: Math.random() * -300,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 3 + 2,
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`
+        });
+    }
+}
+
+function drawConfetti() {
+    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+
+    confettiPieces.forEach(c => {
+        confCtx.fillStyle = c.color;
+        confCtx.fillRect(c.x, c.y, c.size, c.size);
+        c.y += c.speed;
+    });
+
+    requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+function startSanta() {
+    const santa = document.getElementById("santa");
+    santa.style.transition = "transform 18s linear";
+    santa.style.transform = `translateX(${window.innerWidth + 500}px)`;
+}
+</script>
+
+</body>
+</html>
