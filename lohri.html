@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Happy Lohri | TerraSparq</title>
+  <style>
+    :root {
+      --bg-deep: #0a0e17;
+      --bg-glow: #1a152e;
+      --accent-gold: #ffc947;
+      --accent-orange: #ff7a18;
+      --accent-red: #e03b00;
+      /* New festive accents */
+      --accent-magenta: #c7005e;
+      --accent-purple: #5e00c7;
+      --glass: rgba(20, 20, 35, 0.6);
+      --glass-border: rgba(255, 201, 71, 0.3);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at center, var(--bg-glow) 0%, var(--bg-deep) 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient background particles & pattern */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      /* Subtle traditional geometric pattern overlay */
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px, 30px 30px;
+      pointer-events: none;
+    }
+
+    /* --- Floating Kites BG --- */
+    .kite-bg {
+      position: absolute;
+      opacity: 0.4;
+      z-index: 0;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+    }
+    .kite-shape {
+        width: 50px;
+        height: 50px;
+        transform: rotate(45deg);
+        position: relative;
+    }
+    .kite-shape::after { /* Kite Tail */
+        content: '';
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        width: 80px;
+        height: 2px;
+        background: #fff;
+        transform: rotate(-45deg);
+        transform-origin: left center;
+    }
+    .k1 { top: 5%; left: 5%; } .k1 .kite-shape { background: var(--accent-magenta); }
+    .k2 { top: 15%; right: 10%; transform: scale(1.5); } .k2 .kite-shape { background: var(--accent-orange); }
+    .k3 { bottom: 20%; left: -10%; transform: scale(1.2) rotate(15deg); } .k3 .kite-shape { background: var(--accent-gold); }
+    .k4 { top: -5%; right: 30%; transform: scale(0.8); } .k4 .kite-shape { background: var(--accent-red); }
+
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: var(--glass);
+      backdrop-filter: blur(15px);
+      border: 2px solid var(--glass-border);
+      border-radius: 30px;
+      padding: 50px 40px;
+      position: relative;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 201, 71, 0.1);
+      text-align: center;
+      z-index: 1;
+      /* Add a subtle warm glow to the container itself */
+      box-shadow: 0 0 40px rgba(255, 122, 24, 0.2);
+    }
+
+    /* Traditional Phulkari-style Corner Decorations */
+    .decoration {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      pointer-events: none;
+      /* Created a traditional geometric pattern using gradients */
+      background-image: 
+        linear-gradient(45deg, var(--accent-gold) 25%, transparent 25%), 
+        linear-gradient(-45deg, var(--accent-gold) 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, var(--accent-gold) 75%), 
+        linear-gradient(-45deg, transparent 75%, var(--accent-gold) 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      opacity: 0.4;
+      filter: drop-shadow(0 0 5px var(--accent-orange));
+    }
+    .top-left { top: 15px; left: 15px; mask-image: linear-gradient(135deg, black 40%, transparent 80%); -webkit-mask-image: linear-gradient(135deg, black 40%, transparent 80%); border-top: 3px solid var(--accent-gold); border-left: 3px solid var(--accent-gold); border-radius: 20px 0 0 0;}
+    .bottom-right { bottom: 15px; right: 15px; mask-image: linear-gradient(-45deg, black 40%, transparent 80%); -webkit-mask-image: linear-gradient(-45deg, black 40%, transparent 80%); transform: rotate(180deg); border-top: 3px solid var(--accent-gold); border-left: 3px solid var(--accent-gold); border-radius: 20px 0 0 0;}
+
+    /* --- Foreground Traditional Elements (Dhol, Food) --- */
+    .fg-element {
+        position: absolute;
+        z-index: 5;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+    }
+    .fg-element img {
+        width: 100%;
+        height: auto;
+        /* Warm lighting effect from the bonfire */
+        filter: sepia(20%) contrast(1.1) drop-shadow(0 -5px 15px var(--accent-orange));
+    }
+
+    .dhol-container {
+        bottom: -60px;
+        left: -80px;
+        width: 250px;
+        transform: rotate(-10deg);
+    }
+
+    .food-container {
+        bottom: -50px;
+        right: -70px;
+        width: 240px;
+        transform: rotate(5deg);
+    }
+
+
+    .logo-container {
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .logo-container img {
+      height: 70px;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,0.3));
+    }
+
+    h1 {
+      font-size: clamp(42px, 9vw, 82px);
+      margin: 10px 0;
+      /* More vibrant, fiery gradient */
+      background: linear-gradient(to bottom, #fff 0%, var(--accent-gold) 50%, var(--accent-orange) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 900;
+      text-shadow: 0 5px 15px rgba(224, 59, 0, 0.3);
+    }
+
+    .sub-text {
+      font-size: 20px;
+      color: #e0e0e0;
+      margin-bottom: 50px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    /* Enhanced Bonfire */
+    .bonfire-stage {
+      position: relative;
+      height: 320px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      /* Add a glow on the "ground" */
+      background: radial-gradient(ellipse at bottom, rgba(224, 59, 0, 0.3) 0%, transparent 60%);
+      border-radius: 0 0 30px 30px;
+      margin: 0 -40px -50px -40px; /* Extend to edges of container */
+    }
+
+    .flames-svg {
+      width: 300px;
+      height: 300px;
+      filter: drop-shadow(0 0 40px var(--accent-red));
+      z-index: 2;
+      /* Slight upward float animation */
+      animation: float 3s ease-in-out infinite alternate;
+    }
+    @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
+
+    .log-pile {
+      position: absolute;
+      bottom: 20px;
+      width: 200px;
+      height: 45px;
+      background: linear-gradient(to right, #3d200f, #5d331a, #3d200f);
+      border-radius: 10px;
+      box-shadow: inset 0 -5px 20px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.5);
+      z-index: 3;
+    }
+    /* Added more detail to logs */
+    .log-pile::before, .log-pile::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(to right, #4a2712, #6b3e23);
+      border-radius: 12px;
+      box-shadow: inset 0 -5px 15px rgba(0,0,0,0.8);
+    }
+    .log-pile::before { width: 120%; height: 90%; left: -10%; top: -15px; transform: rotate(4deg); }
+    .log-pile::after { width: 115%; height: 85%; right: -8%; top: -25px; transform: rotate(-3deg); }
+
+    /* Animation */
+    .flicker { transform-origin: center bottom; animation: fire-flicker 1.5s infinite alternate ease-in-out; }
+    .flicker-slow { animation-duration: 2.2s; }
+    .flicker-fast { animation-duration: 0.9s; }
+
+    @keyframes fire-flicker {
+      0% { transform: scale(1) translateY(0); }
+      100% { transform: scale(1.05) translateY(-10px) skewX(2deg); filter: brightness(1.2); }
+    }
+
+    .spark {
+      position: absolute;
+      background: #fff;
+      background: linear-gradient(to top, var(--accent-gold), #fff);
+      border-radius: 50%;
+      pointer-events: none;
+      animation: rise linear infinite;
+      box-shadow: 0 0 5px var(--accent-gold);
+    }
+
+    @keyframes rise {
+      0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(-300px) scale(0) rotate(180deg); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 30px 25px; margin-top: 40px; }
+      h1 { font-size: 36px; }
+      .sub-text { font-size: 16px; margin-bottom: 30px; }
+      
+      /* Adjust foreground elements for mobile */
+      .dhol-container { width: 160px; bottom: -30px; left: -40px; transform: rotate(-5deg); }
+      .food-container { width: 150px; bottom: -25px; right: -30px; }
+      
+      /* Hide some kites on small screens to reduce clutter */
+      .k3, .k4 { display: none; }
+      
+      .bonfire-stage { margin: 0 -25px -30px -25px; height: 250px; }
+      .flames-svg { width: 220px; height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="kite-bg k1"><div class="kite-shape"></div></div>
+  <div class="kite-bg k2"><div class="kite-shape"></div></div>
+  <div class="kite-bg k3"><div class="kite-shape"></div></div>
+  <div class="kite-bg k4"><div class="kite-shape"></div></div>
+
+
+  <div class="container">
+
+    <div class="fg-element dhol-container">
+        <img src="./dhol.png" alt="Traditional Punjabi Dhol Drum">
+    </div>
+    <div class="fg-element food-container">
+        <img src="./food.png" alt="Lohri food: Peanuts, Popcorn and Gachak">
+    </div>
+
+
+    <div class="logo-container">
+      <img src="https://www.terrasparq.com/terrasparq-logo-new.png" alt="TerraSparq Logo">
+    </div>
+
+    <h1>Happy Lohri</h1>
+    <p class="sub-text">May the warmth of the bonfire and the sweetness of gachak fill your life with joy and prosperity.</p>
+
+    <div class="bonfire-stage" id="fire-pit">
+      <svg class="flames-svg" viewBox="0 0 100 100">
+        <path class="flicker-slow" fill="#e03b00" d="M50 95C30 95 15 75 15 50C15 25 50 5 50 5C50 5 85 25 85 50C85 75 70 95 50 95Z" opacity="0.7"/>
+        <path class="flicker" fill="#ff7a18" d="M50 95C35 95 25 80 25 60C25 40 50 15 50 15C50 15 75 40 75 60C75 80 65 95 50 95Z" opacity="0.85"/>
+        <path class="flicker-fast" fill="#ffc947" d="M50 95C40 95 35 85 35 70C35 55 50 35 50 35C50 35 65 55 65 70C65 85 60 95 50 95Z"/>
+      </svg>
+      <div class="log-pile"></div>
+    </div>
+  </div>
+
+  <script>
+    function createSpark() {
+      const pit = document.getElementById('fire-pit');
+      const spark = document.createElement('div');
+      const size = Math.random() * 5 + 3 + 'px'; // Slightly bigger sparks
+      
+      spark.className = 'spark';
+      spark.style.width = size;
+      spark.style.height = size;
+      // Start from the middle of the fire
+      spark.style.left = `calc(50% + ${(Math.random() - 0.5) * 80}px)`;
+      spark.style.bottom = Math.random() * 50 + 20 + 'px';
+      
+      const duration = Math.random() * 1.5 + 1;
+      spark.style.animationDuration = duration + 's';
+      
+      pit.appendChild(spark);
+      
+      setTimeout(() => {
+        spark.remove();
+      }, duration * 1000);
+    }
+
+    // Increased spark frequency slightly
+    setInterval(createSpark, 100);
+  </script>
+</body>
+</html>
